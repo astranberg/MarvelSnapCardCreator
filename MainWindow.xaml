@@ -13,33 +13,65 @@
             <ComboBox ItemsSource="{Binding BorderOptions}" SelectedItem="{Binding SelectedBorderOption}" />
             <!-- Logo selection dropdown -->
             <ComboBox ItemsSource="{Binding LogoOptions}" SelectedItem="{Binding SelectedLogoOption}"/>
+            <TextBlock Text="Zoom" Margin="5"/>
+            <Slider Name="ZoomSlider" Minimum="0.5" Maximum="3.0" Value="1.0" ValueChanged="ZoomSlider_ValueChanged" Margin="5"/>
+            <TextBlock Text="Cost" Margin="5"/>
+            <ComboBox Name="CostComboBox" SelectionChanged="CostComboBox_SelectionChanged" Width="100" Margin="5">
+                <ComboBoxItem Content="0"/>
+                <ComboBoxItem Content="1"/>
+                <ComboBoxItem Content="2"/>
+                <ComboBoxItem Content="3"/>
+                <ComboBoxItem Content="4"/>
+                <ComboBoxItem Content="5"/>
+                <ComboBoxItem Content="6"/>
+                <ComboBoxItem Content="7"/>
+                <ComboBoxItem Content="8"/>
+                <ComboBoxItem Content="9"/>
+                <ComboBoxItem Content="10"/>
+            </ComboBox>
+            <TextBlock Text="Power" Margin="5"/>
+            <ComboBox Name="PowerComboBox" SelectionChanged="PowerComboBox_SelectionChanged" Width="100" Margin="5">
+                <ComboBoxItem Content="0"/>
+                <ComboBoxItem Content="1"/>
+                <ComboBoxItem Content="2"/>
+                <ComboBoxItem Content="3"/>
+                <ComboBoxItem Content="4"/>
+                <ComboBoxItem Content="5"/>
+                <ComboBoxItem Content="6"/>
+                <ComboBoxItem Content="7"/>
+                <ComboBoxItem Content="8"/>
+                <ComboBoxItem Content="9"/>
+                <ComboBoxItem Content="10"/>
+            </ComboBox>
+            <Button Content="Export as Image" Click="ExportAsImage_Click"/>
         </StackPanel>
 
         <!-- Right side with images -->
-        <Grid Width="400">
-            <!-- Background image -->
-            <Image Source="{Binding BackgroundImageSource}" Stretch="None"/>
-
-            <!-- Frame image -->
-            <Image Source="{Binding FrameImageSource}" Stretch="None" Margin="50"/>
-
-            <!-- Mask image -->
-            <Image Source="{Binding MaskImageSource}" Stretch="None" Margin="100"/>
-
-            <!-- Logo image -->
-            <Image Source="{Binding LogoImageSource}" Stretch="None" Margin="150"/>
-
-            <!-- Cost image with text -->
-            <StackPanel Margin="200">
-                <Image Source="{Binding CostImageSource}" Stretch="None" MaxWidth="70" MaxHeight="70"/>
-                <TextBlock Text="{Binding SelectedCost}" Foreground="White"/>
-            </StackPanel>
-
-            <!-- Power image with text -->
-            <StackPanel Margin="250">
-                <Image Source="{Binding PowerImageSource}" Stretch="None" MaxWidth="70" MaxHeight="70" />
-                <TextBlock Text="{Binding SelectedPower}" Foreground="White"/>
-            </StackPanel>
-        </Grid>
+        <Canvas Name="CardCanvas" Background="White" Width="400" Height="600">
+            <Viewbox Name="BackgroundViewbox" Canvas.Left="0" Canvas.Top="0" Width="400" Height="600">
+                <Image Name="BackgroundImage" Stretch="Uniform" MouseLeftButtonDown="BackgroundImage_MouseLeftButtonDown"
+                       MouseMove="BackgroundImage_MouseMove" MouseLeftButtonUp="BackgroundImage_MouseLeftButtonUp"
+                       RenderTransformOrigin="0.5,0.5">
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform x:Name="BackgroundScaleTransform"/>
+                            <TranslateTransform x:Name="BackgroundTranslateTransform"/>
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                    <Image.OpacityMask>
+                        <VisualBrush Visual="{Binding ElementName=MaskImage}"/>
+                    </Image.OpacityMask>
+                </Image>
+            </Viewbox>
+            <Image Name="MaskImage" Source="mask.png" Visibility="Collapsed"/>
+            <Image Name="FrameImage" Canvas.Left="0" Canvas.Top="0" Width="400" Height="600"/>
+            <Image Name="CostImage" Canvas.Left="10" Canvas.Top="10" Width="100" Height="100"/>
+            <TextBlock Name="CostText" Canvas.Left="10" Canvas.Top="10" Width="100" Height="100"
+                       Text="0" FontSize="36" Foreground="White" TextAlignment="Center" VerticalAlignment="Center"/>
+            <Image Name="PowerImage" Canvas.Left="290" Canvas.Top="10" Width="100" Height="100"/>
+            <TextBlock Name="PowerText" Canvas.Left="290" Canvas.Top="10" Width="100" Height="100"
+                       Text="0" FontSize="36" Foreground="White" TextAlignment="Center" VerticalAlignment="Center"/>
+            <Image Name="LogoImage" Canvas.Left="150" Canvas.Top="500" Width="100" Height="100"/>
+        </Canvas>
     </StackPanel>
 </Window>

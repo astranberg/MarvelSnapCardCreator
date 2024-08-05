@@ -9,96 +9,15 @@ namespace MarvelSnapCardCreator
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private string _selectedCost;
-        public string SelectedCost
-        {
-            get { return _selectedCost; }
-            set { _selectedCost = value; OnPropertyChanged(); }
-        }
+        private string FrameImagesFolder = @"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\Frames";
+        private string LogoImagesFolder = @"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\Logos";
+        private string BackgroundImagesFolder = @"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\Backgrounds";
+        private string MaskImage = @"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\card-frame-mask-bg.png";
+        private string CostImage = @"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\card-cost.png";
+        private string PowerImage = @"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\card-power.png";
+        private Point origin;
+        private Point start;
 
-        private string _selectedPower;
-        public string SelectedPower
-        {
-            get { return _selectedPower; }
-            set { _selectedPower = value; OnPropertyChanged(); }
-        }
-
-        private BitmapImage _imageSource;
-        public BitmapImage ImageSource
-        {
-            get { return _imageSource; }
-            set { _imageSource = value; OnPropertyChanged(); }
-        }
-
-        private List<string> _borderOptions;
-        public List<string> BorderOptions
-        {
-            get { return _borderOptions; }
-            set { _borderOptions = value; OnPropertyChanged(); }
-        }
-
-        private string _selectedBorderOption;
-        public string SelectedBorderOption
-        {
-            get { return _selectedBorderOption; }
-            set { _selectedBorderOption = value; OnPropertyChanged(); }
-        }
-
-        private List<string> _logoOptions;
-        public List<string> LogoOptions
-        {
-            get { return _logoOptions; }
-            set { _logoOptions = value; OnPropertyChanged(); }
-        }
-
-        private string _selectedLogoOption;
-        public string SelectedLogoOption
-        {
-            get { return _selectedLogoOption; }
-            set { _selectedLogoOption = value; OnPropertyChanged(); }
-        }
-// Set the image sources in the MainWindow class
-        private BitmapImage _logoImageSource;
-        public BitmapImage LogoImageSource
-        {
-            get { return _logoImageSource; }
-            set { _logoImageSource = value; OnPropertyChanged(); }
-        }
-
-        private BitmapImage _costImageSource;
-        public BitmapImage CostImageSource
-        {
-            get { return _costImageSource; }
-            set { _costImageSource = value; OnPropertyChanged(); }
-        }
-
-        private BitmapImage _powerImageSource;
-        public BitmapImage PowerImageSource
-        {
-            get { return _powerImageSource; }
-            set { _powerImageSource = value; OnPropertyChanged(); }
-        }
-
-        private BitmapImage _frameImageSource;
-        public BitmapImage FrameImageSource
-        {
-            get { return _frameImageSource; }
-            set { _frameImageSource = value; OnPropertyChanged(); }
-        }
-
-        private BitmapImage _backgroundImageSource;
-        public BitmapImage BackgroundImageSource
-        {
-            get { return _backgroundImageSource; }
-            set { _backgroundImageSource = value; OnPropertyChanged(); }
-        }
-
-        private BitmapImage _maskImageSource;
-        public BitmapImage MaskImageSource
-        {
-            get { return _maskImageSource; }
-            set { _maskImageSource = value; OnPropertyChanged(); }
-        }
         public MainWindow()
         {
             InitializeComponent();
@@ -109,17 +28,115 @@ namespace MarvelSnapCardCreator
             LogoOptions = new List<string> { "Logo1", "Logo2", "Logo3" };
             
             // Set the image paths
-            LogoImageSource = new BitmapImage(new Uri(@"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\Logos\JeanGrey_Logo.png"));
-            CostImageSource = new BitmapImage(new Uri(@"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\card-cost.png"));
-            PowerImageSource = new BitmapImage(new Uri(@"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\card-power.png"));
-            FrameImageSource = new BitmapImage(new Uri(@"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\Frames\card-frame-common.png"));
-            BackgroundImageSource = new BitmapImage(new Uri(@"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\Backgrounds\jean.jpg"));
-            MaskImageSource = new BitmapImage(new Uri(@"C:\Users\Adam\RiderProjects\MarvelSnapCardCreator\Resources\card-frame-mask-bg.png"));
+            LogoImageSource = new BitmapImage(new Uri($@"{LogoImagesFolder}\JeanGrey_Logo.png"));
+            CostImageSource = new BitmapImage(new Uri(CostImage));
+            PowerImageSource = new BitmapImage(new Uri(PowerImage));
+            FrameImageSource = new BitmapImage(new Uri($@"{FrameImagesFolder}\card-frame-common.png"));
+            BackgroundImageSource = new BitmapImage(new Uri($@"{BackgroundImagesFolder}\jean.jpg"));
+            MaskImageSource = new BitmapImage(new Uri(MaskImage));
         }
 
-        private void UploadImage_Click(object sender, RoutedEventArgs e)
+        private void LoadFrameImages()
         {
-            // Logic to handle the upload image button click event
+            if (Directory.Exists(frameImagesFolder))
+            {
+                var frameFiles = Directory.GetFiles(frameImagesFolder, "*.png");
+                foreach (var file in frameFiles)
+                {
+                    FrameComboBox.Items.Add(System.IO.Path.GetFileName(file));
+                }
+            }
+            else
+            {
+                MessageBox.Show("Frame images folder not found.");
+            }
+        }
+
+        private void FrameComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (FrameComboBox.SelectedItem != null)
+            {
+                string selectedFrame = System.IO.Path.Combine(frameImagesFolder, FrameComboBox.SelectedItem.ToString());
+                FrameImage.Source = new BitmapImage(new Uri(selectedFrame));
+            }
+        }
+
+        private void LoadImage(System.Windows.Controls.Image imageControl)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.png;*.jpg)|*.png;*.jpg";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                imageControl.Source = new BitmapImage(new Uri(openFileDialog.FileName));
+            }
+        }
+
+        private void ExportAsImage_Click(object sender, RoutedEventArgs e)
+        {
+            RenderTargetBitmap renderBitmap = new RenderTargetBitmap(
+                (int)CardCanvas.ActualWidth, (int)CardCanvas.ActualHeight,
+                96d, 96d, PixelFormats.Pbgra32);
+            renderBitmap.Render(CardCanvas);
+
+            BitmapEncoder encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "PNG Files (*.png)|*.png";
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                using (FileStream fileStream = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                {
+                    encoder.Save(fileStream);
+                }
+            }
+        }
+
+        private void BackgroundImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            start = e.GetPosition(CardCanvas);
+            origin = new Point(BackgroundTranslateTransform.X, BackgroundTranslateTransform.Y);
+            element.CaptureMouse();
+        }
+
+        private void BackgroundImage_MouseMove(object sender, MouseEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            if (element.IsMouseCaptured)
+            {
+                Vector v = start - e.GetPosition(CardCanvas);
+                BackgroundTranslateTransform.X = origin.X - v.X;
+                BackgroundTranslateTransform.Y = origin.Y - v.Y;
+            }
+        }
+
+        private void BackgroundImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var element = sender as FrameworkElement;
+            element.ReleaseMouseCapture();
+        }
+
+        private void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            BackgroundScaleTransform.ScaleX = e.NewValue;
+            BackgroundScaleTransform.ScaleY = e.NewValue;
+        }
+
+        private void CostComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (CostComboBox.SelectedItem != null)
+            {
+                CostText.Text = (CostComboBox.SelectedItem as System.Windows.Controls.ComboBoxItem).Content.ToString();
+            }
+        }
+
+        private void PowerComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (PowerComboBox.SelectedItem != null)
+            {
+                PowerText.Text = (PowerComboBox.SelectedItem as System.Windows.Controls.ComboBoxItem).Content.ToString();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
