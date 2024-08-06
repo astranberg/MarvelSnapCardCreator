@@ -8,15 +8,18 @@
         Title="MainWindow" Height="450" Width="600">
     <StackPanel Orientation="Horizontal">
         <!-- Left side with controls and dropdowns -->
-        <StackPanel Width="200" HorizontalAlignment="Left" >
-            <!-- Border selection dropdown -->
-            <ComboBox ItemsSource="{Binding BorderOptions}" SelectedItem="{Binding SelectedBorderOption}" />
+        <StackPanel Width="200" HorizontalAlignment="Left" Margin="5" >
+            <!-- Frame selection dropdown -->
+            <TextBlock Text="Frame Selection" Margin="5"/>
+            <ComboBox ItemsSource="{Binding FrameOptions, Mode=TwoWay}" SelectedItem="{Binding SelectedFrameOption}" Margin="5"/>
             <!-- Logo selection dropdown -->
-            <ComboBox ItemsSource="{Binding LogoOptions}" SelectedItem="{Binding SelectedLogoOption}"/>
+            <TextBlock Text="Logo Selection" Margin="5"/>
+            <ComboBox ItemsSource="{Binding LogoOptions, Mode=TwoWay}" SelectedItem="{Binding SelectedLogoOption}" Margin="5"/>
+            
             <TextBlock Text="Zoom" Margin="5"/>
-            <Slider Name="ZoomSlider" Minimum="0.5" Maximum="3.0" Value="1.0" ValueChanged="ZoomSlider_ValueChanged" Margin="5"/>
+            <!--Slider Name="ZoomSlider" Minimum="0.5" Maximum="3.0" Value="1.0" ValueChanged="ZoomSlider_ValueChanged" Margin="5"/-->
             <TextBlock Text="Cost" Margin="5"/>
-            <ComboBox Name="CostComboBox" SelectionChanged="CostComboBox_SelectionChanged" Width="100" Margin="5">
+            <ComboBox Name="CostComboBox" SelectionChanged="CostComboBox_SelectionChanged" Width="100" Margin="5" HorizontalAlignment="Left">
                 <ComboBoxItem Content="0"/>
                 <ComboBoxItem Content="1"/>
                 <ComboBoxItem Content="2"/>
@@ -30,7 +33,7 @@
                 <ComboBoxItem Content="10"/>
             </ComboBox>
             <TextBlock Text="Power" Margin="5"/>
-            <ComboBox Name="PowerComboBox" SelectionChanged="PowerComboBox_SelectionChanged" Width="100" Margin="5">
+            <ComboBox Name="PowerComboBox" SelectionChanged="PowerComboBox_SelectionChanged" Width="100" Margin="5" HorizontalAlignment="Left">
                 <ComboBoxItem Content="0"/>
                 <ComboBoxItem Content="1"/>
                 <ComboBoxItem Content="2"/>
@@ -43,35 +46,30 @@
                 <ComboBoxItem Content="9"/>
                 <ComboBoxItem Content="10"/>
             </ComboBox>
-            <Button Content="Export as Image" Click="ExportAsImage_Click"/>
+            <Button Content="Export as Image" Click="ExportAsImage_Click" HorizontalContentAlignment="Center" HorizontalAlignment="Center" Margin="15" />
         </StackPanel>
 
         <!-- Right side with images -->
-        <Canvas Name="CardCanvas" Background="White" Width="400" Height="600">
+        <Canvas Name="CardCanvas" Background="LightGray" Width="400" Height="600">
             <Viewbox Name="BackgroundViewbox" Canvas.Left="0" Canvas.Top="0" Width="400" Height="600">
-                <Image Name="BackgroundImage" Stretch="Uniform" MouseLeftButtonDown="BackgroundImage_MouseLeftButtonDown"
-                       MouseMove="BackgroundImage_MouseMove" MouseLeftButtonUp="BackgroundImage_MouseLeftButtonUp"
-                       RenderTransformOrigin="0.5,0.5">
-                    <Image.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform x:Name="BackgroundScaleTransform"/>
-                            <TranslateTransform x:Name="BackgroundTranslateTransform"/>
-                        </TransformGroup>
-                    </Image.RenderTransform>
+                <Image Name="BackgroundImage" Source="Resources/Backgrounds/jean.jpg">
                     <Image.OpacityMask>
-                        <VisualBrush Visual="{Binding ElementName=MaskImage}"/>
+                        <ImageBrush ImageSource="pack://application:,,,/Resources/mask.jpg"/>
                     </Image.OpacityMask>
                 </Image>
             </Viewbox>
-            <Image Name="MaskImage" Source="mask.png" Visibility="Collapsed"/>
+            
             <Image Name="FrameImage" Canvas.Left="0" Canvas.Top="0" Width="400" Height="600"/>
-            <Image Name="CostImage" Canvas.Left="10" Canvas.Top="10" Width="100" Height="100"/>
-            <TextBlock Name="CostText" Canvas.Left="10" Canvas.Top="10" Width="100" Height="100"
-                       Text="0" FontSize="36" Foreground="White" TextAlignment="Center" VerticalAlignment="Center"/>
-            <Image Name="PowerImage" Canvas.Left="290" Canvas.Top="10" Width="100" Height="100"/>
-            <TextBlock Name="PowerText" Canvas.Left="290" Canvas.Top="10" Width="100" Height="100"
-                       Text="0" FontSize="36" Foreground="White" TextAlignment="Center" VerticalAlignment="Center"/>
-            <Image Name="LogoImage" Canvas.Left="150" Canvas.Top="500" Width="100" Height="100"/>
+            
+            <Image Canvas.Left="10" Canvas.Top="10" Name="CostImage" Width="75" Height="75"/>
+            <TextBlock Canvas.Left="10" Canvas.Top="20" Name="CostText" Width="75" Height="75"
+                       Text="0" FontSize="40" Foreground="White" TextAlignment="Center" VerticalAlignment="Bottom" />
+            
+            <Image Canvas.Left="290" Canvas.Top="10" Name="PowerImage" Width="75" Height="75"/>
+            <TextBlock Canvas.Left="290" Canvas.Top="20" Name="PowerText" Width="75" Height="75"
+                       Text="0" FontSize="40" Foreground="White" TextAlignment="Center" HorizontalAlignment="Center"/>
+            
+            <Image Name="LogoImage" Source="Resources/Logos/ThePhoenixForce_Logo.png" Canvas.Left="150" Canvas.Top="500" Width="100" Height="100"/>
         </Canvas>
     </StackPanel>
 </Window>
